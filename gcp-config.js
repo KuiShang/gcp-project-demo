@@ -65,21 +65,21 @@ module.exports = defineConfig(({ mode, env }) => {
         './actions/simple-app/UpdateApprovalDialog':
           './src/pages/simple-app/components/actions/UpdateApprovalDialog.vue'
       },
-      shared: ['vue', 'vuex']
-      // shareLib: {
-      //   vue: `Vue@${cdnBaseUrl}/vendors/vue/2.6.14/vue.min.js`,
-      //   // vue: `Vue@https://cdn.bootcdn.net/ajax/libs/vue/2.6.4/vue.js`,
-      //   // vue: `Vue@https://cdn.bootcdn.net/ajax/libs/vue/2.6.4/vue.min.js`,
-      //   vuex: `Vuex@${cdnBaseUrl}/vendors/vuex/3.6.2/vuex.min.js`,
-      //   '@geip/basic-components': [
-      //     `GCPDesignPro@${cdnBaseUrl}/gcp/gcp-design-pro/1.3.2/index.js`,
-      //     `${cdnBaseUrl}/gcp/gcp-design-pro/1.3.2/theme-default/index.css`
-      //   ],
-      //   '@gcbp/gcp-forms': [
-      //     `GCPForms@${cdnBaseUrl}/gcp/gcp-forms/1.1.0/umd/index.js`,
-      //     `${cdnBaseUrl}/gcp/gcp-forms/1.1.0/umd/index.css`
-      //   ]
-      // }
+      // shared: ['vue', 'vuex']
+      shareLib: {
+        // vue: `Vue@${cdnBaseUrl}/vendors/vue/2.6.14/vue.min.js`,
+        // // vue: `Vue@https://cdn.bootcdn.net/ajax/libs/vue/2.6.4/vue.js`,
+        // // vue: `Vue@https://cdn.bootcdn.net/ajax/libs/vue/2.6.4/vue.min.js`,
+        // vuex: `Vuex@${cdnBaseUrl}/vendors/vuex/3.6.2/vuex.min.js`,
+        // '@geip/basic-components': [
+        //   `GCPDesignPro@${cdnBaseUrl}/gcp/gcp-design-pro/1.3.2/index.js`,
+        //   `${cdnBaseUrl}/gcp/gcp-design-pro/1.3.2/theme-default/index.css`
+        // ],
+        // '@gcbp/gcp-forms': [
+        //   `GCPForms@${cdnBaseUrl}/gcp/gcp-forms/1.1.0/umd/index.js`,
+        //   `${cdnBaseUrl}/gcp/gcp-forms/1.1.0/umd/index.css`
+        // ]
+      }
     },
     server: {
       port,
