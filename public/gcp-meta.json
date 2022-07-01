@@ -1,0 +1,64 @@
+{
+  "name": "GCBPIncomeBudget",
+  "packageName": "gcbp-income-budget-web",
+  "label": "gcp-cli通用脚手架",
+  "url": "${GCP_CDN_BASE_URL}/gcbp/gcbp-income-budget-web/latest/",
+  "description": "提供给开发平台界面设计器使用",
+  "coreList": [
+    {
+      "name": "SimpleApp",
+      "label": "脚手架demo",
+      "pageExposePath": "./cores/SimpleAppPage",
+      "moduleExposePath": "./cores/SimpleAppModule",
+      "servicesExposePath": [
+        "./cores/BudgetPreparationService",
+        "./cores/DrawingDeliverysService"
+      ]
+    }
+  ],
+  "widgets": {
+    "action": [
+      {
+        "name": "UpdateApprovalDialog",
+        "exposePath": "./actions/simple-app/UpdateApprovalDialog",
+        "label": "更新报批情况",
+        "description": "",
+        "icon": "",
+        "category": "action",
+        "matchCores": ["SimpleApp"],
+        "matchViews": ["BillDetailView"],
+        "props": [
+          {
+            "name": "label",
+            "label": "按钮名称",
+            "type": "string",
+            "group": "basic",
+            "defaultValue": "更新报批情况",
+            "description": ""
+          },
+          {
+            "name": "type",
+            "label": "按钮类型",
+            "type": "string",
+            "group": "basic",
+            "defaultValue": "iconfont icon-banbengengxin",
+            "description": ""
+          },
+          {
+            "name": "icon",
+            "label": "按钮图标",
+            "type": "object",
+            "group": "advanced",
+            "defaultValue": "primary",
+            "description": ""
+          }
+        ]
+      }
+    ],
+    "form": [],
+    "layout": [],
+    "view": [],
+    "normalVue": [],
+    "others": []
+  }
+}

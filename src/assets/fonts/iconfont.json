@@ -1,0 +1,16 @@
+{
+  "id": "3208205",
+  "name": "业务中台—收入预算",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "14966088",
+      "name": "版本更新",
+      "font_class": "banbengengxin",
+      "unicode": "e8c5",
+      "unicode_decimal": 59589
+    }
+  ]
+}

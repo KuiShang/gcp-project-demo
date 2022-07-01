@@ -1,0 +1,29 @@
+{
+  "name": "gcbp-income-budget-web",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "@commitlint/cli": "^16.1.0",
+    "@commitlint/config-conventional": "^16.0.0",
+    "@gcbp/eslint-config-vue": "^1.0.0-alpha.12",
+    "@gcbp/gcp-cli": "^1.0.0-alpha.22",
+    "@gcbp/gcp-cli-plugin-vue2": "^1.0.0-alpha.23",
+    "@geip/browserslist-config": "^1.0.0-alpha.1",
+    "husky": "^7.0.4"
+  },
+  "dependencies": {
+    "@geip/basic-components": "^1.3.2",
+    "vue": "^2.6.14",
+    "vuex": "^3.6.2"
+  },
+  "scripts": {
+    "prepare": "husky install",
+    "lint": "eslint . --ext js,ts,tsx,vue --fix",
+    "dev": "gcp dev",
+    "build": "gcp build --env prod",
+    "start": "gcp serve",
+    "analyze": "gcp build --analyze"
+  }
+}

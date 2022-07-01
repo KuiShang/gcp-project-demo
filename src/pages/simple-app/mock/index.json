@@ -1,0 +1,733 @@
+{
+  "kind": "Applet",
+  "metadata": {
+    "name": "BudgetPreparation",
+    "app": "income-budget",
+    "product": "gcbp",
+    "tenant": "default"
+  },
+  "spec": {
+    "config": {
+      "frameworkLib": {
+        "name": "GCBPIncomeBudgetWeb",
+        "packageName": "gcbp-income-budget-web",
+        "label": "Web端施工图预算框架库",
+        "pageExposePath": "./SimpleAppPage",
+        "coreName": "SimpleApp",
+        "url": "${GCP_CDN_BASE_URL}/gcbp/gcbp-income-budget-web/latest/"
+      },
+      "widgetLibs": [
+        {
+          "name": "GCBPWebCommonWidgets",
+          "packageName": "@gcbp/web-common-widgets",
+          "label": "业务中台Web端通用控件库",
+          "url": "${GCP_CDN_BASE_URL}/gcbp/gcbp-web-common-widgets/lastest/",
+          "exposePathList": ["./actions/GroupSelectAction"]
+        }
+      ],
+      "baseLocation": "/gcbp/gcbp-income-budget-web/latest/simple-app",
+      "pages": [
+        {
+          "name": "list",
+          "path": "/",
+          "view": "BudgetPreparationList"
+        },
+        {
+          "name": "detailNew",
+          "path": "/detail/new",
+          "view": "BudgetPreparationDetail"
+        },
+        {
+          "name": "detail",
+          "path": "/detail/:id",
+          "view": "BudgetPreparationDetail"
+        }
+      ],
+      "serviceDefs": {
+        "default": {
+          "docName": "BudgetPreparation.income-budget.gcbp.default",
+          "baseUrl": "/gcbp/api/income-budget/v1/budget-preparations/"
+        },
+        "drawingDeliverys": {
+          "docName": "DrawingDelivery.income-budget.gcbp.default",
+          "baseUrl": "/gcbp/api/income-budget/v1/drawing-deliverys/"
+        }
+      },
+      "initialState": {
+        "tableListData": {
+          "pagination": {
+            "currentPage": 0,
+            "pageSize": 10,
+            "total": 0
+          }
+        }
+      }
+    },
+    "views": [
+      {
+        "metadata": {
+          "name": "BudgetPreparationList",
+          "app": "income-budget",
+          "version": "1.0.0",
+          "product": "gcbp",
+          "tenant": "default"
+        },
+        "kind": "View",
+        "spec": {
+          "template": {
+            "type": "BillListView",
+            "props": {
+              "queryInitialData": {},
+              "paginationProps": {
+                "pageSizes": [10, 20, 50, 100],
+                "type": "manual"
+              },
+              "searchPlaceholder": "11请输入预算编号/预算名称/合同名称",
+              "tableProps": {
+                "showSummary": true,
+                "isRemoteSummary": true,
+                "summaryProps": ["contractAmount", "budgetAmount", "reportAmount", "replyAmount"],
+                "summaryCols": []
+              }
+            },
+            "slots": {
+              "queryFilterExpand": [
+                {
+                  "type": "field",
+                  "props": {
+                    "label": "所在单体",
+                    "localSearch": true,
+                    "prop": "buildings",
+                    "valueKey": "_id",
+                    "type": "lookup",
+                    "queryMethod": "fns:fetchBuildings"
+                  }
+                },
+                {
+                  "props": {
+                    "label": "专业",
+                    "prop": "specialty",
+                    "type": "dict",
+                    "dictCode": "gcbp.specialty"
+                  },
+                  "type": "Field"
+                },
+                {
+                  "props": {
+                    "type": "enum",
+                    "prop": "billState",
+                    "label": "单据状态",
+                    "options": [
+                      {
+                        "name": "待提交",
+                        "value": "notCommitted"
+                      },
+                      {
+                        "name": "已提交",
+                        "value": "committed"
+                      }
+                    ]
+                  },
+                  "type": "Field"
+                },
+                {
+                  "type": "field",
+                  "props": {
+                    "prop": "createdBy",
+                    "label": "制单人",
+                    "type": "string"
+                  }
+                }
+              ],
+              "actionZone": [
+                {
+                  "type": "NewAction",
+                  "props": {
+                    "label": "创建施工图预算"
+                  }
+                },
+                {
+                  "type": "NewAction",
+                  "props": {
+                    "label": "查看引用"
+                  }
+                },
+                {
+                  "type": "ModalAction",
+                  "props": {
+                    "label": "更新报批情况",
+                    "icon": "iconfont icon-banbengengxin",
+                    "type": "primary"
+                  },
+                  "slots": {
+                    "dialog": [
+                      {
+                        "type": "UpdateApprovalDialog"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "RefreshAction",
+                  "props": {
+                    "label": "刷新",
+                    "type": "primary"
+                  }
+                }
+              ]
+            },
+            "content": [
+              {
+                "props": {
+                  "prop": "code",
+                  "label": "预算编号",
+                  "fixed": true
+                },
+                "content": {
+                  "type": "ViewAction",
+                  "props": {
+                    ":data": "row",
+                    ":label": "row.code",
+                    "showOverflowTooltip": true
+                  }
+                },
+                "type": "FormTableColumn"
+              },
+              {
+                "props": {
+                  "prop": "name",
+                  "label": "预算名称",
+                  "fixed": true
+                },
+                "type": "FormTableColumn"
+              },
+              {
+                "props": {
+                  "prop": "contract",
+                  "label": "合同名称"
+                },
+                "type": "FormTableColumn"
+              },
+              {
+                "props": {
+                  "prop": "drawingDelivery.drawingsName",
+                  "label": "图纸名称"
+                },
+                "type": "FormTableColumn"
+              },
+              {
+                "props": {
+                  "prop": "contract.taxType",
+                  "label": "合同约定计税方式",
+                  "width": "150"
+                },
+                "type": "FormTableColumn"
+              },
+              {
+                "props": {
+                  "prop": "contract.taxRate",
+                  "label": "税率(%)"
+                },
+                "type": "FormTableColumn"
+              },
+              {
+                "props": {
+                  "prop": "contractAmount",
+                  "label": "合同金额(元)",
+                  "showUnit": false
+                },
+                "type": "FormTableColumn"
+              },
+              {
+                "props": {
+                  "prop": "budgetAmount",
+                  "label": "预算金额(元)",
+                  "showUnit": false
+                },
+                "type": "FormTableColumn"
+              },
+              {
+                "props": {
+                  "prop": "buildings",
+                  "label": "所在单体"
+                },
+                "type": "FormTableColumn"
+              },
+              {
+                "props": {
+                  "prop": "priceType",
+                  "label": "计价方式"
+                },
+                "type": "FormTableColumn"
+              },
+              {
+                "props": {
+                  "type": "dict",
+                  "prop": "specialty",
+                  "dictCode": "gcbp.specialty",
+                  "label": "专业"
+                },
+                "type": "FormTableColumn"
+              },
+              {
+                "props": {
+                  "prop": "reportCase",
+                  "label": "报出情况"
+                },
+                "type": "FormTableColumn"
+              },
+              {
+                "props": {
+                  "type": "date",
+                  "format": "date",
+                  "prop": "reportDate",
+                  "align": "right",
+                  "label": "报出日期",
+                  "width": "120"
+                },
+                "type": "FormTableColumn"
+              },
+              {
+                "props": {
+                  "prop": "reportAmount",
+                  "label": "报出金额(元)",
+                  "showUnit": false
+                },
+                "type": "FormTableColumn"
+              },
+              {
+                "props": {
+                  "prop": "replyCase",
+                  "label": "批复情况"
+                },
+                "type": "FormTableColumn"
+              },
+              {
+                "props": {
+                  "type": "date",
+                  "format": "date",
+                  "prop": "replyDate",
+                  "align": "right",
+                  "label": "批复日期",
+                  "width": "120"
+                },
+                "type": "FormTableColumn"
+              },
+              {
+                "props": {
+                  "prop": "replyAmount",
+                  "label": "批复金额(元)",
+                  "showUnit": false
+                },
+                "type": "FormTableColumn"
+              },
+              {
+                "props": {
+                  "prop": "billState",
+                  "type": "billStateEditor",
+                  "label": "单据状态"
+                },
+                "type": "FormTableColumn"
+              },
+              {
+                "props": {
+                  "type": "string",
+                  "prop": "project.name",
+                  "label": "制单机构"
+                },
+                "type": "FormTableColumn"
+              },
+              {
+                "props": {
+                  "prop": "createdBy.name",
+                  "label": "制单人"
+                },
+                "type": "FormTableColumn"
+              },
+              {
+                "props": {
+                  "type": "date",
+                  "format": "date",
+                  "prop": "docDate",
+                  "label": "制单日期",
+                  "align": "right",
+                  "width": "120"
+                },
+                "type": "FormTableColumn"
+              },
+              {
+                "props": {
+                  "type": "action",
+                  "label": "操作",
+                  "width": "120",
+                  "fixed": "right"
+                },
+                "content": [
+                  {
+                    "type": "ViewAction",
+                    "props": {
+                      ":data": "row",
+                      ":index": "$totalIndex",
+                      "type": "text"
+                    }
+                  },
+                  {
+                    "type": "DeleteBillAction",
+                    "props": {
+                      ":data": "row",
+                      ":index": "$totalIndex",
+                      "type": "text",
+                      "icon": null
+                    }
+                  }
+                ],
+                "type": "FormTableColumn"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "metadata": {
+          "name": "BudgetPreparationDetail",
+          "app": "income-budget",
+          "version": "1.0.0",
+          "product": "gcbp",
+          "tenant": "default"
+        },
+        "kind": "View",
+        "spec": {
+          "template": {
+            "type": "BillDetailView",
+            "props": {
+              "label": "施工图预算编制进度管理",
+              "hideActionZone": true
+            },
+            "slots": {
+              "extra": [],
+              "actionZone": [
+                {
+                  "type": "SaveAction"
+                },
+                {
+                  "type": "CommitAction"
+                },
+                {
+                  "type": "EditAction"
+                },
+                {
+                  "type": "CancelAction"
+                },
+                {
+                  "type": "DeleteBillAction"
+                },
+                {
+                  "type": "ModalAction",
+                  "props": {
+                    "label": "更新报批情况",
+                    "icon": "iconfont icon-banbengengxin",
+                    "type": "primary"
+                  },
+                  "slots": {
+                    "dialog": [
+                      {
+                        "type": "UpdateApprovalDialog"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "type": "RefreshAction",
+                  "props": {
+                    "label": "刷新",
+                    "type": "primary"
+                  }
+                }
+              ]
+            },
+            "content": [
+              {
+                "type": "Section",
+                "props": {
+                  "label": "基本信息",
+                  "level": 1
+                },
+                "slots": {
+                  "actionBar": []
+                },
+                "content": [
+                  {
+                    "type": "FieldGrid",
+                    "content": [
+                      {
+                        "props": {
+                          "prop": "code",
+                          "label": "预算编号",
+                          "maxLength": 50
+                        },
+                        "type": "Field"
+                      },
+                      {
+                        "props": {
+                          "label": "预算名称",
+                          "prop": "name",
+                          "required": true
+                        },
+                        "type": "Field"
+                      },
+                      {
+                        "props": {
+                          "label": "合同名称",
+                          "prop": "contract",
+                          "required": true,
+                          "clearable": false,
+                          "type": "lookup",
+                          "queryMethod": "fns:fetchContracts"
+                        },
+                        "type": "Field",
+                        "events": {
+                          "change": "fns:contractChangeHandler"
+                        }
+                      },
+                      {
+                        "props": {
+                          "label": "图纸名称",
+                          "prop": "drawingDelivery",
+                          "required": true,
+                          "clearable": false,
+                          "type": "lookup",
+                          "labelKey": "drawingsName",
+                          "queryMethod": "fns:fetchDrawingsNames"
+                        },
+                        "type": "Field",
+                        "events": {
+                          "change": "fns:drawingsNameChangeHandler"
+                        }
+                      },
+                      {
+                        "props": {
+                          "type": "enum",
+                          "label": "合同约定计税方式",
+                          "prop": "contract.taxType",
+                          "readonly": true
+                        },
+                        "type": "Field"
+                      },
+                      {
+                        "props": {
+                          "type": "number",
+                          "unit": "%",
+                          "prop": "contract.taxRate",
+                          "format": "ratio",
+                          "label": "税率",
+                          "readonly": true
+                        },
+                        "type": "Field"
+                      },
+                      {
+                        "props": {
+                          "type": "number",
+                          "unit": "元",
+                          "prop": "contractAmount",
+                          "format": "money",
+                          "label": "合同金额",
+                          "required": true
+                        },
+                        "type": "Field"
+                      },
+                      {
+                        "props": {
+                          "type": "number",
+                          "unit": "元",
+                          "prop": "budgetAmount",
+                          "format": "money",
+                          "label": "预算金额",
+                          "required": true
+                        },
+                        "type": "Field"
+                      },
+                      {
+                        "type": "Field",
+                        "props": {
+                          "label": "所在单体",
+                          "clearable": false,
+                          "localSearch": true,
+                          "prop": "buildings",
+                          ":disabled": "${!dataModel.drawingDelivery.drawingsName}",
+                          "valueKey": "_id",
+                          "type": "lookup",
+                          ":placeholder": "${dataModel.drawingDelivery.buildings.length > 0 ? '请选择' : ''}",
+                          "queryMethod": "fns:buildingList"
+                        }
+                      },
+                      {
+                        "props": {
+                          "label": "计价方式",
+                          "prop": "priceType",
+                          "type": "enum",
+                          "required": true
+                        },
+                        "type": "Field"
+                      },
+                      {
+                        "props": {
+                          "label": "专业",
+                          "prop": "specialty",
+                          "readonly": true,
+                          "type": "dict",
+                          "dictCode": "gcbp.specialty"
+                        },
+                        "type": "Field"
+                      },
+                      {
+                        "props": {
+                          "label": "报出情况",
+                          "prop": "reportCase",
+                          "type": "enum"
+                        },
+                        "events": {
+                          ":change": "#{function({val, model}){if (val === 'reported') {model.reportDate = new Date()}}}"
+                        },
+                        "type": "Field"
+                      },
+                      {
+                        "props": {
+                          "type": "date",
+                          "format": "date",
+                          "prop": "reportDate",
+                          "label": "报出日期"
+                        },
+                        "events": {
+                          ":change": "#{function({val, model}){if (val) {model.reportCase = 'reported'}}}"
+                        },
+                        "type": "Field"
+                      },
+                      {
+                        "props": {
+                          "type": "number",
+                          "unit": "元",
+                          "prop": "reportAmount",
+                          "format": "money",
+                          "label": "报出金额",
+                          "required": true
+                        },
+                        "type": "Field"
+                      },
+                      {
+                        "props": {
+                          "label": "批复情况",
+                          "prop": "replyCase",
+                          "type": "enum"
+                        },
+                        "events": {
+                          ":change": "#{function({val, model}){if (val === 'reply') {model.replyDate = new Date()}}}"
+                        },
+                        "type": "Field"
+                      },
+                      {
+                        "props": {
+                          "type": "date",
+                          "format": "date",
+                          "prop": "replyDate",
+                          "label": "批复日期"
+                        },
+                        "events": {
+                          ":change": "#{function({val, model}){if (val) {model.replyCase = 'reply'}}}"
+                        },
+                        "type": "Field"
+                      },
+                      {
+                        "props": {
+                          "type": "number",
+                          "unit": "元",
+                          "prop": "replyAmount",
+                          "format": "money",
+                          "label": "批复金额",
+                          "required": true
+                        },
+                        "type": "Field"
+                      },
+                      {
+                        "props": {
+                          "prop": "billState",
+                          "label": "单据状态",
+                          "readonly": true
+                        },
+                        "type": "Field"
+                      },
+                      {
+                        "props": {
+                          "type": "string",
+                          "prop": "project.name",
+                          "label": "制单机构",
+                          "readonly": true
+                        },
+                        "type": "Field"
+                      },
+                      {
+                        "props": {
+                          "type": "text",
+                          "prop": "createdBy.name",
+                          "label": "制单人",
+                          "readonly": true
+                        },
+                        "type": "Field"
+                      },
+                      {
+                        "props": {
+                          "type": "date",
+                          "format": "date",
+                          "prop": "docDate",
+                          "label": "制单日期",
+                          "readonly": true
+                        },
+                        "type": "Field"
+                      },
+                      {
+                        "props": {
+                          "prop": "remark",
+                          "label": "备注",
+                          "col": 2,
+                          "forceBreak": true,
+                          "maxLength": 200
+                        },
+                        "type": "Field"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "FieldGrid",
+                    "content": [
+                      {
+                        "props": {
+                          "label": "报出预算文件",
+                          "prop": "reportBudgetAttachment",
+                          "multiple": true,
+                          "type": "file",
+                          "col": 3,
+                          "limit": 100
+                        },
+                        "type": "Field"
+                      },
+                      {
+                        "props": {
+                          "label": "批复预算文件",
+                          "prop": "replyBudgetAttachment",
+                          "multiple": true,
+                          "type": "file",
+                          "col": 3,
+                          "limit": 100
+                        },
+                        "type": "Field"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ]
+  }
+}

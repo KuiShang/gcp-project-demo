@@ -1,0 +1,19 @@
+@font-face {
+  font-family: 'iconfont'; /* Project id 3208205 */
+  src: url('iconfont.woff2?t=1646746755317') format('woff2'),
+  url('iconfont.woff?t=1646746755317') format('woff'),
+  url('iconfont.ttf?t=1646746755317') format('truetype');
+}
+
+.iconfont {
+  font-style: normal;
+  font-size: 16px;
+  font-family: 'iconfont' !important;
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-banbengengxin:before {
+  content: '\e8c5';
+}
